@@ -10,9 +10,9 @@ class MNISTLoader():
         ])
 
         # Load the MNIST dataset
-        self.train_dataset = datasets.MNIST(root="./data", train=True, transform=transform, download=True)
-        self.test_dataset = datasets.MNIST(root="./data", train=False, transform=transform, download=True)
+        self.train_dataset = datasets.MNIST(root="./data", train=True, transform=self.transform, download=True)
+        self.test_dataset = datasets.MNIST(root="./data", train=False, transform=self.transform, download=True)
 
         # Create DataLoader
-        self.train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-        self.test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+        self.train_loader = DataLoader(self.train_dataset, batch_size=64, shuffle=True)
+        self.test_loader = DataLoader(self.test_dataset, batch_size=64, shuffle=False)

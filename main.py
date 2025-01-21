@@ -15,9 +15,9 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)  # Lower learning ra
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.5)
 
 # Load data
-Mnist = MNISTLoader()
-train_loader = Mnist.train_loader
-test_loader = Mnist.test_loader
+mnist = MNISTLoader()
+train_loader = mnist.train_loader
+test_loader = mnist.test_loader
 
 # Learning rate scheduler
 

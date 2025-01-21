@@ -4,14 +4,17 @@ import matplotlib.pyplot as plt
 from autoencoder import Autoencoder
 from mnist_loader import MNISTLoader
 
-# Choose device
 device = torch.device("mps" if torch.mps.is_available() else "cpu")
 print(f"Using device: {device}")
 
-# Initialize the model, loss function and optimizer
+# hyper parameters
+epochs_num = 30
+learning_rate = 0.0001
+
+# Initialize the model, loss function, optimizer and scheduler
 model = Autoencoder().to(device)
 criterion = torch.nn.MSELoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)  # Lower learning rate
+optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.5)
 
 # Load data
@@ -19,38 +22,33 @@ mnist = MNISTLoader()
 train_loader = mnist.train_loader
 test_loader = mnist.test_loader
 
-# Learning rate scheduler
-
-# Training loop
-num_epochs = 30
-for epoch in range(num_epochs):
+# training loop
+for epoch in range(epochs_num):
     model.train()
     running_loss = 0.0
     for batch_data, _ in train_loader:
-        # Move the batch data to the correct device
+        # move batch data to the device
         batch_data = batch_data.to(device)
 
-        # Forward pass
+        # forward pass
         outputs = model(batch_data)
         loss = criterion(outputs, batch_data)
 
-        # Backward pass
+        # backward pass
         optimizer.zero_grad()
         loss.backward()
 
-        # Check gradients
+        # optimizing
         optimizer.step()
-
         running_loss += loss.item()
 
-    scheduler.step()  # Reduce the learning rate after each epoch
-
-    print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {running_loss/len(train_loader):.4f}")
+    scheduler.step()
+    print(f"Epoch [{epoch+1}/{epochs_num}], Loss: {running_loss/len(train_loader):.4f}")
 
 # Save the model
 torch.save(model.state_dict(), "autoencoder_digits.pth")
 
-# Visualize original and reconstructed images
+# Visualisation
 model.eval()
 example_data, _ = next(iter(test_loader))
 example_data = example_data.to(device)
@@ -58,15 +56,14 @@ example_data = example_data.to(device)
 with torch.no_grad():
     reconstructed = model(example_data)
 
-# Visualization
 fig, axes = plt.subplots(2, 10, figsize=(10, 2))
 
 for i in range(10):
-    # Original images
+    # original images
     axes[0, i].imshow(example_data[i].cpu().numpy().squeeze(), cmap="gray")
     axes[0, i].axis("off")
 
-    # Reconstructed images
+    # reconstructed images
     axes[1, i].imshow(reconstructed[i].cpu().numpy().squeeze(), cmap="gray")
     axes[1, i].axis("off")
 

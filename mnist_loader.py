@@ -9,10 +9,10 @@ class MNISTLoader():
             transforms.Normalize((0.5,), (0.5,))  # Normalize to the range [-1, 1]
         ])
 
-        # Load the MNIST dataset
-        self.train_dataset = datasets.MNIST(root="./data", train=True, transform=self.transform, download=True)
-        self.test_dataset = datasets.MNIST(root="./data", train=False, transform=self.transform, download=True)
+        # load data
+        self.train_dataset = datasets.MNIST(root="./data", train=True, transform=self.transform, download=False)
+        self.test_dataset = datasets.MNIST(root="./data", train=False, transform=self.transform, download=False)
 
-        # Create DataLoader
+        # create dataloaders
         self.train_loader = DataLoader(self.train_dataset, batch_size=64, shuffle=True)
         self.test_loader = DataLoader(self.test_dataset, batch_size=64, shuffle=False)
